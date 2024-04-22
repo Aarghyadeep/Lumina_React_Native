@@ -20,7 +20,7 @@ export default function FormField({
        <Text className='text-base text-gray-100 font-pmedium'>
            {title}
        </Text>
-       <View className='w-full h-16 px-4 bg-black-200 border-red-500 border-2 
+       <View className='w-full h-16 px-4 bg-black-100 border-black-200 border-2 
        rounded-2xl focus:border-secondary items-center flex-row'>
         <TextInput
         className='flex-1 text-white font-psemibold text-base'
