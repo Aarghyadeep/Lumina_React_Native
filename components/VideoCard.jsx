@@ -2,20 +2,26 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { icons } from '../constants';
 import { useState } from 'react';
 import { ResizeMode, Video } from 'expo-av';
+import DropDown from './DropDown';
 
 
 export default function VideoCard({ video: {
+    $id,
     title,
     thumbnail,
     video,
-    creator: { username, avatar }
+    creator: { username, avatar },
+    liked,
 } }) {
 
     const [play, setPlay] = useState();
+    const [showMenu, setShowMenu] = useState(false);
+
+    const toggleMenu = ()=> setShowMenu(!showMenu);
 
   return (
     <View className='flex-col items-center px-4 mb-14'>
-        <View className='flex-row gap-3 items-start'>
+        <View className='flex-row gap-3 items-start relative'>
           <View className='justify-center items-center flex-row flex-1'>
             <View className='w-[46px] h-[46px] rounded-lg border border-secondary
             justify-center items-center p-0.5'>
@@ -37,14 +43,16 @@ export default function VideoCard({ video: {
              </Text>
             </View>
           </View>
-          <View className='pt-2'>
+          <TouchableOpacity className='pt-2 p-2' onPress={toggleMenu}>
            <Image
            source={icons.menu}
            className='w-5 h-5'
            resizeMode='contain'
            />
-          </View>
+          </TouchableOpacity>
+          {showMenu && <DropDown id={$id} liked={liked} />}
         </View>
+
 
        {play ? (
         <Video
