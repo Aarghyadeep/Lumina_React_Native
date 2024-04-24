@@ -5,7 +5,7 @@ import { View, TextInput, TouchableOpacity, Image, Alert } from 'react-native';
 import { icons } from "../constants";
 import { router, usePathname } from 'expo-router';
 
-export default function SearchInput({ initialQuery }) {
+export default function SearchInput({ initialQuery, placeholder }) {
    
       const pathname = usePathname();
 
@@ -16,7 +16,7 @@ export default function SearchInput({ initialQuery }) {
        rounded-2xl focus:border-secondary items-center flex-row space-x-4'>
         <TextInput
         className='text-base mt-0.5 text-white flex-1 font-pregular'
-        placeholder="Search for a video topic"
+        placeholder={placeholder}
         placeholderTextColor="#CDCDE0"
         value={query}
         onChangeText={(e) => setQuery(e)}

@@ -82,7 +82,7 @@ export default function SignUp() {
         <Text className='text-lg font-pregular text-gray-100'>
           Already have an account?
           </Text> 
-         <Link href="/sign-up"
+         <Link href="/sign-in"
          className='text-lg font-psemibold text-secondary'>
            Sign In
          </Link>

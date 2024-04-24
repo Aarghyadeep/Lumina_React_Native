@@ -10,7 +10,7 @@ export default function VideoCard({ video: {
     title,
     thumbnail,
     video,
-    creator: { username, avatar },
+    creator: { username, avatar, photo },
     liked,
 } }) {
 
@@ -25,11 +25,19 @@ export default function VideoCard({ video: {
           <View className='justify-center items-center flex-row flex-1'>
             <View className='w-[46px] h-[46px] rounded-lg border border-secondary
             justify-center items-center p-0.5'>
-              <Image
-              source={{ uri: avatar }}
-              className='w-full h-full rounded-lg'
-              resizeMode='cover'
-              />
+              {photo === '' ? (
+                <Image
+                source={{ uri: avatar }}
+                className='w-full h-full rounded-lg'
+                resizeMode='cover'
+                />
+              ): (
+                <Image
+                source={{ uri: photo }}
+                className='w-full h-full rounded-lg'
+                resizeMode='cover'
+                />
+              )}
             </View>
 
             <View className='justify-center flex-1 ml-3 gap-y-1'>
@@ -50,7 +58,7 @@ export default function VideoCard({ video: {
            resizeMode='contain'
            />
           </TouchableOpacity>
-          {showMenu && <DropDown id={$id} liked={liked} />}
+          {showMenu && <DropDown id={$id} liked={liked} video={video} />}
         </View>
 
 

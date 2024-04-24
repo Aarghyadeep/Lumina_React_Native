@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Share } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 
@@ -6,28 +6,41 @@ import { useGlobalContext } from '../context/GlobalProvider';
 import { toggleLike } from '../lib/appwrite';
 import { useEffect, useState } from 'react';
 
-export default function DropDown({ id, liked }) {
+export default function DropDown({ id, liked, video  }) {
    
   const {  user } = useGlobalContext();
   const [isLiked, setIsLiked] = useState(false);
-  
-  
+  const beenLiked = liked.includes(user.$id);
+   
   useEffect(()=> {
-    const beenLiked = liked.some(obj => obj.$id === user.$id);
-    if(beenLiked){
-        setIsLiked(true);
+     if(beenLiked){
+      setIsLiked(true);
      }
   }, []);
 
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: `Check out this video: ${video}`,
+      });
+    } catch (error) {
+      console.error('Error sharing video:', error.message);
+    }
+  };
+  
 
   const toggleLiked = async()=> {
       try {
           const res = await toggleLike(id, user.$id);
+          console.log(res);
+          if(res.includes(user.$id)){
+            setIsLiked(true);
+          }else {
+            setIsLiked(false);
+          }
       } catch (error) {
         console.log(error);
-      } finally {
-        setIsLiked(!isLiked);
-      }
+      } 
   }
 
   return (
@@ -48,7 +61,7 @@ export default function DropDown({ id, liked }) {
         ) }
         <View className='border-[0.5px] border-gray-700' />
         <TouchableOpacity className='flex-1 items-center justify-center flex-row 
-        gap-2'>
+        gap-2' onPress={handleShare}>
         <Fontisto name="share" size={18} color="white" />
        <Text className='text-white'>Share</Text>
         </TouchableOpacity>

@@ -7,19 +7,12 @@ import { useState } from 'react';
 import FormField from "../../components/FormField";
 import { icons } from '../../constants';
 import CustomButton from "../../components/CustomButton";
-import CustomModal from '../../components/CustomModal';
 import { createVideo } from "../../lib/appwrite";
 import { useGlobalContext } from "../../context/GlobalProvider";
 
 export default function Create() {
   
   const { user } = useGlobalContext();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-    const [message, setMessage] = useState('');
-  
-  const closeModal = ()=> {
-     setIsModalOpen(false);
-  }
 
   const [uploading, setUploading] = useState(false);
   const [form, setForm] = useState({
@@ -48,10 +41,8 @@ export default function Create() {
   }
 
   const submit = async()=> {
-     if(!form.prompt || !form.title || !form.thumbnail || !form.video){
-      //  setMessage('Please fill in all the fields!');
-      //  setIsModalOpen(true);
-       return null;
+     if(!form.prompt || !form.title || !form.thumbnail || !form.video){  
+      return Alert.alert("Please provide all fields");
      }
 
      setUploading(true);
@@ -62,15 +53,21 @@ export default function Create() {
         userId: user.$id,
       })
 
-      // setMessage('Post Uploaded Successfully!');
-      // setIsModalOpen(true);
+      Alert.alert("Success", "Post uploaded successfully");
       router.push('/home');
 
      } catch (error) {
-      // setMessage(error);
-      // setIsModalOpen(true);
+      Alert.alert("Error", error.message);
       console.log('Error',error);
-     }
+     } finally {
+      setForm({
+        title: "",
+        video: null,
+        thumbnail: null,
+        prompt: "",
+      });
+      setUploading(false);
+    }
   }
 
   return (
@@ -93,11 +90,6 @@ export default function Create() {
             Upload video
           </Text>
            
-          {/* <CustomModal
-           message={message}
-           isModalOpen={isModalOpen}
-           onClose={closeModal}
-          />  */}
 
           <TouchableOpacity onPress={()=> openPicker('video')}>
             { form.video ? (
