@@ -1,16 +1,17 @@
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useEffect } from 'react';
+import * as ImagePicker from 'expo-image-picker';
+import { Entypo } from '@expo/vector-icons';
 
-import SearchInput from '../../components/SearchInput';
 import EmptyState from '../../components/EmptyState';
-import { getUserPosts, signOut } from "../../lib/appwrite";
+import { getUserPosts, signOut, updatePhoto } from "../../lib/appwrite";
 import useAppwrite from '../../lib/useAppwrite';
 import VideoCard from '../../components/VideoCard';
 import { useGlobalContext } from '../../context/GlobalProvider';
 import { icons } from '../../constants';
 import InfoBox from '../../components/InfoBox';
 import { router } from 'expo-router';
+import { useState } from 'react';
 
 
 export default function Profile() {
@@ -18,12 +19,28 @@ export default function Profile() {
   const { user, setUser, setIsLoggedIn } = useGlobalContext(); 
   
   const { data: posts, refetch } = useAppwrite(() => getUserPosts(user.$id));
+    const [image, setImage] = useState(null);
 
   const logout = async()=> {
      await signOut();
      setUser(null);
      setIsLoggedIn(false);
      router.replace('sign-in');
+  }
+
+  const openPicker = async()=> {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      aspect: [4, 3],
+      quality: 1,
+    });
+     
+    if(!result.canceled){
+      setImage(result.assets[0]);
+    }
+    if(image !== null){
+      await updatePhoto(image, user?.accountId, user?.$id);
+    }
   }
 
 
@@ -46,7 +63,8 @@ export default function Profile() {
                 resizeMode='contain'
                />
           </TouchableOpacity>
-
+            
+           <View className='w-16 h-16 rounded-lg relative'> 
            <View className='w-16 h-16 border border-secondary
            rounded-lg justify-center items-center'>
            { user?.photo === '' ? (
@@ -58,10 +76,14 @@ export default function Profile() {
             <Image
             source={{ uri: user?.photo }}
             className='w-[90%] h-[90%] rounded-lg'
-            resizeMode='cover'
              />
            )}
            </View>
+           <TouchableOpacity className='absolute bottom-0 right-0 bg-white rounded-xl'
+           onPress={openPicker}>
+           <Entypo name='circle-with-plus' size={20} color="black" />
+           </TouchableOpacity>
+            </View> 
 
            <InfoBox
            title={user?.username}

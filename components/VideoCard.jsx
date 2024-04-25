@@ -1,8 +1,11 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Share } from 'react-native';
 import { icons } from '../constants';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ResizeMode, Video } from 'expo-av';
-import DropDown from './DropDown';
+import { toggleLike } from '../lib/appwrite';
+import { AntDesign } from '@expo/vector-icons';
+import { Fontisto } from '@expo/vector-icons';
+import { useGlobalContext } from '../context/GlobalProvider';
 
 
 export default function VideoCard({ video: {
@@ -13,15 +16,45 @@ export default function VideoCard({ video: {
     creator: { username, avatar, photo },
     liked,
 } }) {
-
+    
+    const {  user } = useGlobalContext();
     const [play, setPlay] = useState();
-    const [showMenu, setShowMenu] = useState(false);
+    const [isLiked, setIsLiked] = useState(false);
+    const beenLiked = liked.includes(user?.$id);
+   
+    useEffect(()=> {
+      if(beenLiked){
+        setIsLiked(true);
+      }
+    }, []);
 
-    const toggleMenu = ()=> setShowMenu(!showMenu);
+    const handleShare = async () => {
+      try {
+        await Share.share({
+          message: `Check out this video: ${video}`,
+        });
+      } catch (error) {
+        console.error('Error sharing video:', error.message);
+      }
+    };
+
+    const toggleLiked = async()=> {
+      try {
+          const res = await toggleLike($id, user?.$id);
+          console.log(res);
+          if(res.includes(user?.$id)){
+            setIsLiked(true);
+          }else {
+            setIsLiked(false);
+          }
+      } catch (error) {
+        console.log(error);
+      } 
+  }
 
   return (
     <View className='flex-col items-center px-4 mb-14'>
-        <View className='flex-row gap-3 items-start relative'>
+        <View className='flex-row relative'>
           <View className='justify-center items-center flex-row flex-1'>
             <View className='w-[46px] h-[46px] rounded-lg border border-secondary
             justify-center items-center p-0.5'>
@@ -51,14 +84,23 @@ export default function VideoCard({ video: {
              </Text>
             </View>
           </View>
-          <TouchableOpacity className='pt-2 p-2' onPress={toggleMenu}>
-           <Image
-           source={icons.menu}
-           className='w-5 h-5'
-           resizeMode='contain'
-           />
-          </TouchableOpacity>
-          {showMenu && <DropDown id={$id} liked={liked} video={video} />}
+          <View className='right-3 gap-2 flex-row items-center absolute'>
+          { isLiked ? (
+           <TouchableOpacity className='flex-1 items-center justify-center flex-row 
+           gap-2' onPress={toggleLiked}>
+           <AntDesign name="like1" size={25} color="red" />
+           </TouchableOpacity> 
+        ) : (
+            <TouchableOpacity className='flex-1 items-center justify-center flex-row 
+            gap-2' onPress={toggleLiked}>
+            <AntDesign name="like2" size={25} color="white" />
+            </TouchableOpacity>
+        ) }
+        <TouchableOpacity className='flex-1 items-center justify-center flex-row 
+        gap-2' onPress={handleShare}>
+        <Fontisto name="share" size={20} color="white" />
+        </TouchableOpacity>
+          </View>
         </View>
 
 

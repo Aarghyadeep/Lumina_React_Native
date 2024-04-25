@@ -13,8 +13,6 @@ export default function Saved() {
 
   const { user } = useGlobalContext(); 
 
-  const { data: posts, refetch } = useAppwrite(()=> getLikedPosts(user.$id));
-
   const [ refreshing, setRefreshing ] = useState(false);
 
   const onRefresh = async()=> {
@@ -22,6 +20,9 @@ export default function Saved() {
       await refetch();
       setRefreshing(false);
   }
+
+    const { data: posts, refetch } = useAppwrite(()=> getLikedPosts(user.$id));
+
 
   return (
     <SafeAreaView className='bg-primary h-full'>
@@ -50,6 +51,7 @@ export default function Saved() {
         <EmptyState
         title="No videos found"
         subtitle="Like a video to add to your saved collections"
+        hideButton
         />
        )}
        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
