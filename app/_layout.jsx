@@ -3,12 +3,13 @@ import { useFonts } from "expo-font";
 import { useEffect } from 'react';
 import GlobalProvider from "../context/GlobalProvider";
 import * as SplashScreen from 'expo-splash-screen';
+import { View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 
-  const [fontsLoaded, error] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
     "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
@@ -21,24 +22,26 @@ export default function RootLayout() {
   });
   
   useEffect(() => {
-    if (error) throw error;
+    if (fontError) throw error;
 
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, error]);
+  }, [fontsLoaded, fontError]);
 
   if (!fontsLoaded) {
     return null;
   }
 
-  if (!fontsLoaded && !error) {
+  if (!fontsLoaded && !fontError) {
     return null;
   }
 
   return (
     <GlobalProvider>
-    <Stack>
+    <Stack screenOptions={{
+      presentation: 'transparentModal',
+    }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" options={{headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{headerShown: false }} />

@@ -6,6 +6,8 @@ import { toggleLike } from '../lib/appwrite';
 import { AntDesign } from '@expo/vector-icons';
 import { Fontisto } from '@expo/vector-icons';
 import { useGlobalContext } from '../context/GlobalProvider';
+import * as Clipboard from 'expo-clipboard';
+import { MaterialIcons } from '@expo/vector-icons';
 
 
 export default function VideoCard({ video: {
@@ -15,6 +17,7 @@ export default function VideoCard({ video: {
     video,
     creator: { username, avatar, photo },
     liked,
+    prompt,
 } }) {
     
     const {  user } = useGlobalContext();
@@ -27,6 +30,10 @@ export default function VideoCard({ video: {
         setIsLiked(true);
       }
     }, []);
+
+    const copyToClipboard = () => {
+      Clipboard.setStringAsync(prompt);
+    };
 
     const handleShare = async () => {
       try {
@@ -84,22 +91,29 @@ export default function VideoCard({ video: {
              </Text>
             </View>
           </View>
-          <View className='right-3 gap-2 flex-row items-center absolute'>
+          <View className='right-3 pt-2 gap-3 flex-row items-center absolute justify-center'>
           { isLiked ? (
-           <TouchableOpacity className='flex-1 items-center justify-center flex-row 
-           gap-2' onPress={toggleLiked}>
+           <TouchableOpacity className='flex-1 items-center justify-center'
+            onPress={toggleLiked}>
            <AntDesign name="like1" size={25} color="red" />
            </TouchableOpacity> 
         ) : (
-            <TouchableOpacity className='flex-1 items-center justify-center flex-row 
-            gap-2' onPress={toggleLiked}>
+            <TouchableOpacity className='flex-1 items-center justify-center' onPress={toggleLiked}>
             <AntDesign name="like2" size={25} color="white" />
             </TouchableOpacity>
         ) }
-        <TouchableOpacity className='flex-1 items-center justify-center flex-row 
-        gap-2' onPress={handleShare}>
+        <TouchableOpacity className='flex-1 items-center justify-center' 
+        onPress={handleShare}>
         <Fontisto name="share" size={20} color="white" />
         </TouchableOpacity>
+         <TouchableOpacity className='flex-1 items-center justify-center'
+         onPress={copyToClipboard}>
+        <MaterialIcons
+          name="content-copy"
+          size={25}
+          color="white"
+        />
+         </TouchableOpacity>
           </View>
         </View>
 
