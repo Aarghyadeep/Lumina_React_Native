@@ -1,5 +1,5 @@
 
-![Logo]([https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png](https://github.com/Aarghyadeep/Lumina_React_Native/blob/da85c14deff89f1f4d5ef02656645312841b9107/assets/images/logo.png))
+![Logo](assets/images/logo.png)
 
 
 # Lumina - Video sharing app
